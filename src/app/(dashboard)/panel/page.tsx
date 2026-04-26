@@ -120,18 +120,22 @@ export default function PanelPage() {
     ? Math.floor((now - new Date(config.last_check_in).getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
-  // Build pie chart data from distributions grouped by heir
-  const pieData = distributions.reduce<{ name: string; value: number }[]>((acc, d) => {
-    const heir = heirs.find((h) => h.id === d.heir_id);
-    const name = heir?.name ?? "Sin asignar";
-    const existing = acc.find((item) => item.name === name);
-    if (existing) {
-      existing.value += d.percentage;
-    } else {
-      acc.push({ name, value: d.percentage });
-    }
+  // Build pie chart data weighted by wallet balance (true inheritance share),
+  // not by raw percentage points (which would sum to >100% across wallets).
+  const heirShares = distributions.reduce<Record<string, number>>((acc, d) => {
+    const wallet = wallets.find((w) => w.id === d.wallet_id);
+    const balance = wallet?.balance ?? 0;
+    const share = balance * (d.percentage / 100);
+    acc[d.heir_id] = (acc[d.heir_id] ?? 0) + share;
     return acc;
-  }, []);
+  }, {});
+  const totalAssigned = Object.values(heirShares).reduce((s, v) => s + v, 0);
+  const pieData = Object.entries(heirShares)
+    .filter(([, share]) => share > 0)
+    .map(([heirId, share]) => ({
+      name: heirs.find((h) => h.id === heirId)?.name ?? "Sin asignar",
+      value: totalAssigned > 0 ? Math.round((share / totalAssigned) * 1000) / 10 : 0,
+    }));
 
   const formatAction = (action: string): string => {
     const map: Record<string, string> = {
