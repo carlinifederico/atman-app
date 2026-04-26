@@ -23,11 +23,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Wallet as WalletIcon, Copy } from "lucide-react";
+import { Plus, Pencil, Trash2, Wallet as WalletIcon, Copy, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { fetchBalance, BalanceFetchError } from "@/lib/onchain/balance";
 
 const walletSchema = z.object({
   label: z.string().min(1, "El nombre es requerido"),
@@ -44,6 +45,7 @@ export default function BilleterasPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingWallet, setEditingWallet] = useState<Wallet | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState<string | null>(null);
 
   const {
     register,
@@ -132,6 +134,27 @@ export default function BilleterasPage() {
   const copyAddress = (address: string) => {
     navigator.clipboard.writeText(address);
     toast.success("Direccion copiada");
+  };
+
+  const handleRefreshBalance = async (wallet: Wallet) => {
+    setRefreshing(wallet.id);
+    try {
+      const liveBalance = await fetchBalance(wallet.blockchain, wallet.address);
+      // Round to 6 significant digits for display
+      const rounded = Math.round(liveBalance * 1e6) / 1e6;
+      const result = await updateWallet(wallet.id, { balance: rounded });
+      if (result?.error) {
+        toast.error("Balance leído pero no se pudo guardar");
+        return;
+      }
+      toast.success(`Balance on-chain: ${rounded} ${wallet.blockchain}`);
+    } catch (e) {
+      const msg =
+        e instanceof BalanceFetchError ? e.message : "No se pudo leer el balance on-chain";
+      toast.error(msg);
+    } finally {
+      setRefreshing(null);
+    }
   };
 
   if (loading) {
@@ -304,11 +327,26 @@ export default function BilleterasPage() {
                     <Copy size={12} />
                   </Button>
                 </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold">{wallet.balance}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {BLOCKCHAINS.find((b) => b.value === wallet.blockchain)?.icon ?? ""}
-                  </span>
+                <div className="flex items-baseline justify-between gap-2">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold">{wallet.balance}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {BLOCKCHAINS.find((b) => b.value === wallet.blockchain)?.icon ?? ""}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => handleRefreshBalance(wallet)}
+                    disabled={refreshing === wallet.id}
+                    aria-label="Refrescar balance on-chain"
+                    title="Leer balance on-chain"
+                  >
+                    <RefreshCw
+                      size={14}
+                      className={refreshing === wallet.id ? "animate-spin" : ""}
+                    />
+                  </Button>
                 </div>
                 {wallet.encrypted_notes && (
                   <p className="text-xs text-muted-foreground line-clamp-2">
