@@ -30,7 +30,9 @@ export function useDistribution(walletId?: string) {
   }, [supabase, walletId]);
 
   useEffect(() => {
-    fetchDistributions();
+    queueMicrotask(() => {
+      void fetchDistributions();
+    });
   }, [fetchDistributions]);
 
   const saveDistributions = async (
@@ -53,7 +55,9 @@ export function useDistribution(walletId?: string) {
       return { data: newDists, error: null };
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return null;
 
     await supabase.from("distributions").delete().eq("wallet_id", wId);
@@ -72,10 +76,7 @@ export function useDistribution(walletId?: string) {
       return { data: [], error: null };
     }
 
-    const { data, error } = await supabase
-      .from("distributions")
-      .insert(inserts)
-      .select();
+    const { data, error } = await supabase.from("distributions").insert(inserts).select();
 
     if (!error) {
       await supabase.from("activity_log").insert({
@@ -90,5 +91,11 @@ export function useDistribution(walletId?: string) {
 
   const totalPercentage = distributions.reduce((sum, d) => sum + d.percentage, 0);
 
-  return { distributions, loading, saveDistributions, totalPercentage, refetch: fetchDistributions };
+  return {
+    distributions,
+    loading,
+    saveDistributions,
+    totalPercentage,
+    refetch: fetchDistributions,
+  };
 }

@@ -26,7 +26,9 @@ export function useHeirs() {
   }, [supabase]);
 
   useEffect(() => {
-    fetchHeirs();
+    queueMicrotask(() => {
+      void fetchHeirs();
+    });
   }, [fetchHeirs]);
 
   const addHeir = async (heir: Omit<Heir, "id" | "user_id" | "created_at" | "updated_at">) => {
@@ -42,7 +44,9 @@ export function useHeirs() {
       return { data: newHeir, error: null };
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return null;
 
     const { data, error } = await supabase
@@ -65,7 +69,9 @@ export function useHeirs() {
   const updateHeir = async (id: string, updates: Partial<Heir>) => {
     if (DEMO_MODE) {
       setHeirs((prev) =>
-        prev.map((h) => (h.id === id ? { ...h, ...updates, updated_at: new Date().toISOString() } : h))
+        prev.map((h) =>
+          h.id === id ? { ...h, ...updates, updated_at: new Date().toISOString() } : h
+        )
       );
       return { data: null, error: null };
     }
@@ -78,7 +84,9 @@ export function useHeirs() {
       .single();
 
     if (!error && data) {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         await supabase.from("activity_log").insert({
           user_id: user.id,
@@ -101,7 +109,9 @@ export function useHeirs() {
     const { error } = await supabase.from("heirs").delete().eq("id", id);
 
     if (!error) {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user && heir) {
         await supabase.from("activity_log").insert({
           user_id: user.id,

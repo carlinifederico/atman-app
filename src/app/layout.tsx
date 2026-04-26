@@ -32,9 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="dark">
-      <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
-      >
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         {children}
         <Toaster richColors position="top-right" />
       </body>

@@ -42,12 +42,11 @@ export function Trust() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Seguridad en la que puedes{" "}
-            <span className="text-gradient-gold">confiar</span>
+            Seguridad en la que puedes <span className="text-gradient-gold">confiar</span>
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Tu seguridad es nuestra prioridad. Cada capa de nuestra plataforma
-            esta disenada para proteger tus activos.
+            Tu seguridad es nuestra prioridad. Cada capa de nuestra plataforma esta disenada para
+            proteger tus activos.
           </p>
         </motion.div>
 
@@ -65,9 +64,7 @@ export function Trust() {
                 <badge.icon className="h-6 w-6" />
               </div>
               <h3 className="mb-2 text-base font-semibold">{badge.title}</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {badge.description}
-              </p>
+              <p className="text-sm leading-relaxed text-muted-foreground">{badge.description}</p>
             </motion.div>
           ))}
         </div>

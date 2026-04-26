@@ -18,20 +18,17 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { PieChart as PieChartIcon, Save, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function DistribucionPage() {
   const { wallets, loading: walletsLoading } = useWallets();
   const { heirs, loading: heirsLoading } = useHeirs();
   const [selectedWalletId, setSelectedWalletId] = useState<string>("");
-  const { distributions, loading: distLoading, saveDistributions } =
-    useDistribution(selectedWalletId || undefined);
+  const {
+    distributions,
+    loading: distLoading,
+    saveDistributions,
+  } = useDistribution(selectedWalletId || undefined);
   const [percentages, setPercentages] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
 
@@ -43,14 +40,11 @@ export default function DistribucionPage() {
         const dist = distributions.find((d) => d.heir_id === h.id);
         map[h.id] = dist?.percentage ?? 0;
       });
-      setPercentages(map);
+      queueMicrotask(() => setPercentages(map));
     }
   }, [distributions, heirs, distLoading]);
 
-  const totalPercentage = Object.values(percentages).reduce(
-    (sum, p) => sum + p,
-    0
-  );
+  const totalPercentage = Object.values(percentages).reduce((sum, p) => sum + p, 0);
 
   const handleSliderChange = (heirId: string, value: number | readonly number[]) => {
     const val = Array.isArray(value) ? value[0] : value;
@@ -136,9 +130,7 @@ export default function DistribucionPage() {
           {/* Sliders */}
           <Card className="bg-card border-white/10">
             <CardHeader>
-              <CardTitle className="text-base">
-                Asignar Porcentajes
-              </CardTitle>
+              <CardTitle className="text-base">Asignar Porcentajes</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {heirs.length === 0 ? (
@@ -152,9 +144,7 @@ export default function DistribucionPage() {
                       <div className="flex items-center justify-between">
                         <Label className="text-sm">
                           {heir.name}{" "}
-                          <span className="text-muted-foreground">
-                            ({heir.relationship})
-                          </span>
+                          <span className="text-muted-foreground">({heir.relationship})</span>
                         </Label>
                         <span className="min-w-[3rem] text-right text-sm font-bold text-gold">
                           {percentages[heir.id] ?? 0}%
@@ -162,9 +152,7 @@ export default function DistribucionPage() {
                       </div>
                       <Slider
                         value={[percentages[heir.id] ?? 0]}
-                        onValueChange={(val) =>
-                          handleSliderChange(heir.id, val)
-                        }
+                        onValueChange={(val) => handleSliderChange(heir.id, val)}
                         max={100}
                         step={1}
                         className="[&_[role=slider]]:bg-gold [&_[data-slot=range]]:bg-gold"
@@ -181,8 +169,8 @@ export default function DistribucionPage() {
                           totalPercentage === 100
                             ? "text-green-400"
                             : totalPercentage > 100
-                            ? "text-red-400"
-                            : "text-yellow-400"
+                              ? "text-red-400"
+                              : "text-yellow-400"
                         }`}
                       >
                         {totalPercentage}%
@@ -246,19 +234,14 @@ export default function DistribucionPage() {
                         borderRadius: "8px",
                         color: "#F5F5F5",
                       }}
-                      formatter={(value) => [
-                        `${value}%`,
-                        "Porcentaje",
-                      ]}
+                      formatter={(value) => [`${value}%`, "Porcentaje"]}
                     />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
                 <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
                   <PieChartIcon size={48} className="mb-4 opacity-50" />
-                  <p className="text-sm">
-                    Asigna porcentajes para ver la distribucion
-                  </p>
+                  <p className="text-sm">Asigna porcentajes para ver la distribucion</p>
                 </div>
               )}
             </CardContent>

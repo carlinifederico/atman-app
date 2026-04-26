@@ -23,9 +23,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           supabaseResponse = NextResponse.next({
             request,
           });
@@ -42,10 +40,15 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Protected routes - redirect to login if not authenticated
-  const protectedPaths = ["/panel", "/billeteras", "/herederos", "/distribucion", "/activacion", "/vista-heredero"];
-  const isProtected = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
+  const protectedPaths = [
+    "/panel",
+    "/billeteras",
+    "/herederos",
+    "/distribucion",
+    "/activacion",
+    "/vista-heredero",
+  ];
+  const isProtected = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
@@ -55,9 +58,7 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect authenticated users away from auth pages
   const authPaths = ["/login", "/registro"];
-  const isAuthPage = authPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
+  const isAuthPage = authPaths.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (isAuthPage && user) {
     const url = request.nextUrl.clone();

@@ -26,10 +26,14 @@ export function useWallets() {
   }, [supabase]);
 
   useEffect(() => {
-    fetchWallets();
+    queueMicrotask(() => {
+      void fetchWallets();
+    });
   }, [fetchWallets]);
 
-  const addWallet = async (wallet: Omit<Wallet, "id" | "user_id" | "created_at" | "updated_at">) => {
+  const addWallet = async (
+    wallet: Omit<Wallet, "id" | "user_id" | "created_at" | "updated_at">
+  ) => {
     if (DEMO_MODE) {
       const newWallet: Wallet = {
         ...wallet,
@@ -42,7 +46,9 @@ export function useWallets() {
       return { data: newWallet, error: null };
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return null;
 
     const { data, error } = await supabase
@@ -65,7 +71,9 @@ export function useWallets() {
   const updateWallet = async (id: string, updates: Partial<Wallet>) => {
     if (DEMO_MODE) {
       setWallets((prev) =>
-        prev.map((w) => (w.id === id ? { ...w, ...updates, updated_at: new Date().toISOString() } : w))
+        prev.map((w) =>
+          w.id === id ? { ...w, ...updates, updated_at: new Date().toISOString() } : w
+        )
       );
       return { data: null, error: null };
     }
@@ -78,7 +86,9 @@ export function useWallets() {
       .single();
 
     if (!error && data) {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         await supabase.from("activity_log").insert({
           user_id: user.id,
@@ -101,7 +111,9 @@ export function useWallets() {
     const { error } = await supabase.from("wallets").delete().eq("id", id);
 
     if (!error) {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user && wallet) {
         await supabase.from("activity_log").insert({
           user_id: user.id,

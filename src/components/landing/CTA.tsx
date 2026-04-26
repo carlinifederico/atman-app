@@ -17,12 +17,11 @@ export function CTA() {
         transition={{ duration: 0.6 }}
       >
         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Protege tu{" "}
-          <span className="text-gradient-gold">legado hoy</span>
+          Protege tu <span className="text-gradient-gold">legado hoy</span>
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground">
-          No dejes tu patrimonio digital al azar. Comienza ahora y asegura el
-          futuro financiero de tus seres queridos.
+          No dejes tu patrimonio digital al azar. Comienza ahora y asegura el futuro financiero de
+          tus seres queridos.
         </p>
         <div className="mt-8">
           <Button

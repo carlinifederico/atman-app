@@ -6,10 +6,7 @@ export async function POST(request: NextRequest) {
     const { user_id } = await request.json();
 
     if (!user_id || typeof user_id !== "string") {
-      return NextResponse.json(
-        { error: "user_id es requerido" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "user_id es requerido" }, { status: 400 });
     }
 
     const supabase = await createClient();
@@ -20,10 +17,7 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user || user.id !== user_id) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
     // Fetch wallets, heirs, distributions for this user
@@ -64,9 +58,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch {
-    return NextResponse.json(
-      { error: "Error interno del servidor" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
   }
 }

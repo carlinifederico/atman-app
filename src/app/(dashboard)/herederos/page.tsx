@@ -139,18 +139,14 @@ export default function HerederosPage() {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger
             onClick={openCreate}
-            render={
-              <Button className="glow-gold bg-gold text-black hover:bg-gold-light" />
-            }
+            render={<Button className="glow-gold bg-gold text-black hover:bg-gold-light" />}
           >
             <Plus size={16} />
             Agregar Heredero
           </DialogTrigger>
           <DialogContent className="bg-card border-white/10">
             <DialogHeader>
-              <DialogTitle>
-                {editingHeir ? "Editar Heredero" : "Agregar Heredero"}
-              </DialogTitle>
+              <DialogTitle>{editingHeir ? "Editar Heredero" : "Agregar Heredero"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
@@ -161,9 +157,7 @@ export default function HerederosPage() {
                   {...register("name")}
                   className="bg-background border-white/10"
                 />
-                {errors.name && (
-                  <p className="text-xs text-red-400">{errors.name.message}</p>
-                )}
+                {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -175,15 +169,11 @@ export default function HerederosPage() {
                   {...register("email")}
                   className="bg-background border-white/10"
                 />
-                {errors.email && (
-                  <p className="text-xs text-red-400">{errors.email.message}</p>
-                )}
+                {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="wallet_address">
-                  Direccion de billetera (opcional)
-                </Label>
+                <Label htmlFor="wallet_address">Direccion de billetera (opcional)</Label>
                 <Input
                   id="wallet_address"
                   placeholder="0x..."
@@ -198,10 +188,7 @@ export default function HerederosPage() {
                   control={control}
                   name="relationship"
                   render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={(val) => field.onChange(val ?? "")}
-                    >
+                    <Select value={field.value} onValueChange={(val) => field.onChange(val ?? "")}>
                       <SelectTrigger className="w-full bg-background border-white/10">
                         <SelectValue placeholder="Seleccionar relacion" />
                       </SelectTrigger>
@@ -216,18 +203,12 @@ export default function HerederosPage() {
                   )}
                 />
                 {errors.relationship && (
-                  <p className="text-xs text-red-400">
-                    {errors.relationship.message}
-                  </p>
+                  <p className="text-xs text-red-400">{errors.relationship.message}</p>
                 )}
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setDialogOpen(false)}
-                >
+                <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)}>
                   Cancelar
                 </Button>
                 <Button
@@ -235,11 +216,7 @@ export default function HerederosPage() {
                   disabled={isSubmitting}
                   className="bg-gold text-black hover:bg-gold-light"
                 >
-                  {isSubmitting
-                    ? "Guardando..."
-                    : editingHeir
-                    ? "Actualizar"
-                    : "Agregar"}
+                  {isSubmitting ? "Guardando..." : editingHeir ? "Actualizar" : "Agregar"}
                 </Button>
               </div>
             </form>
@@ -251,13 +228,8 @@ export default function HerederosPage() {
         <Card className="bg-card border-white/10">
           <CardContent className="flex flex-col items-center gap-4 py-16">
             <Users size={48} className="text-muted-foreground" />
-            <p className="text-lg text-muted-foreground">
-              No tienes herederos registrados
-            </p>
-            <Button
-              onClick={openCreate}
-              className="bg-gold text-black hover:bg-gold-light"
-            >
+            <p className="text-lg text-muted-foreground">No tienes herederos registrados</p>
+            <Button onClick={openCreate} className="bg-gold text-black hover:bg-gold-light">
               <Plus size={16} />
               Agregar tu primer heredero
             </Button>
@@ -273,19 +245,12 @@ export default function HerederosPage() {
               <CardHeader className="flex flex-row items-start justify-between pb-2">
                 <div className="space-y-1">
                   <CardTitle className="text-base">{heir.name}</CardTitle>
-                  <Badge
-                    variant="secondary"
-                    className="bg-gold/10 text-gold border-0"
-                  >
+                  <Badge variant="secondary" className="bg-gold/10 text-gold border-0">
                     {heir.relationship}
                   </Badge>
                 </div>
                 <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => openEdit(heir)}
-                  >
+                  <Button variant="ghost" size="icon-sm" onClick={() => openEdit(heir)}>
                     <Pencil size={14} />
                   </Button>
                   <Button

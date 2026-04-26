@@ -2,20 +2,21 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { DEMO_MODE, DEMO_WALLETS, DEMO_HEIRS, DEMO_DISTRIBUTIONS, DEMO_ACTIVATION, DEMO_ACTIVITIES } from "@/lib/demo-data";
+import {
+  DEMO_MODE,
+  DEMO_WALLETS,
+  DEMO_HEIRS,
+  DEMO_DISTRIBUTIONS,
+  DEMO_ACTIVATION,
+  DEMO_ACTIVITIES,
+} from "@/lib/demo-data";
 import { CHART_COLORS } from "@/lib/constants";
 import type { Wallet, Heir, Distribution, ActivationConfig, ActivityLog } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Wallet as WalletIcon, Users, Shield, Clock, Activity, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function PanelPage() {
   const supabase = createClient();
@@ -38,18 +39,13 @@ export default function PanelPage() {
       setLoading(false);
       return;
     }
-    const [walletsRes, heirsRes, distRes, configRes, activityRes] =
-      await Promise.all([
-        supabase.from("wallets").select("*"),
-        supabase.from("heirs").select("*"),
-        supabase.from("distributions").select("*"),
-        supabase.from("activation_configs").select("*").limit(1).single(),
-        supabase
-          .from("activity_log")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(10),
-      ]);
+    const [walletsRes, heirsRes, distRes, configRes, activityRes] = await Promise.all([
+      supabase.from("wallets").select("*"),
+      supabase.from("heirs").select("*"),
+      supabase.from("distributions").select("*"),
+      supabase.from("activation_configs").select("*").limit(1).single(),
+      supabase.from("activity_log").select("*").order("created_at", { ascending: false }).limit(10),
+    ]);
 
     setWallets(walletsRes.data ?? []);
     setHeirs(heirsRes.data ?? []);
@@ -60,7 +56,9 @@ export default function PanelPage() {
   }, [supabase]);
 
   useEffect(() => {
-    fetchData();
+    queueMicrotask(() => {
+      void fetchData();
+    });
   }, [fetchData]);
 
   const handleCheckIn = async () => {
@@ -70,7 +68,13 @@ export default function PanelPage() {
     if (DEMO_MODE) {
       setConfig((prev) => (prev ? { ...prev, last_check_in: now } : prev));
       setActivities((prev) => [
-        { id: `a-${Date.now()}`, user_id: "demo-user-001", action: "check_in", details: { timestamp: now }, created_at: now },
+        {
+          id: `a-${Date.now()}`,
+          user_id: "demo-user-001",
+          action: "check_in",
+          details: { timestamp: now },
+          created_at: now,
+        },
         ...prev,
       ]);
       toast.success("Check-in realizado correctamente");
@@ -101,36 +105,33 @@ export default function PanelPage() {
         details: { timestamp: now },
       });
       toast.success("Check-in realizado correctamente");
-      setConfig((prev) =>
-        prev ? { ...prev, last_check_in: now } : prev
-      );
+      setConfig((prev) => (prev ? { ...prev, last_check_in: now } : prev));
       fetchData();
     }
     setCheckingIn(false);
   };
 
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, []);
   const daysSinceCheckIn = config?.last_check_in
-    ? Math.floor(
-        (Date.now() - new Date(config.last_check_in).getTime()) /
-          (1000 * 60 * 60 * 24)
-      )
+    ? Math.floor((now - new Date(config.last_check_in).getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
   // Build pie chart data from distributions grouped by heir
-  const pieData = distributions.reduce<{ name: string; value: number }[]>(
-    (acc, d) => {
-      const heir = heirs.find((h) => h.id === d.heir_id);
-      const name = heir?.name ?? "Sin asignar";
-      const existing = acc.find((item) => item.name === name);
-      if (existing) {
-        existing.value += d.percentage;
-      } else {
-        acc.push({ name, value: d.percentage });
-      }
-      return acc;
-    },
-    []
-  );
+  const pieData = distributions.reduce<{ name: string; value: number }[]>((acc, d) => {
+    const heir = heirs.find((h) => h.id === d.heir_id);
+    const name = heir?.name ?? "Sin asignar";
+    const existing = acc.find((item) => item.name === name);
+    if (existing) {
+      existing.value += d.percentage;
+    } else {
+      acc.push({ name, value: d.percentage });
+    }
+    return acc;
+  }, []);
 
   const formatAction = (action: string): string => {
     const map: Record<string, string> = {
@@ -281,9 +282,7 @@ export default function PanelPage() {
                   >
                     <div className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-gold" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">
-                        {formatAction(a.action)}
-                      </p>
+                      <p className="text-sm font-medium">{formatAction(a.action)}</p>
                       <p className="text-xs text-muted-foreground">
                         {new Date(a.created_at).toLocaleString("es-ES", {
                           dateStyle: "medium",

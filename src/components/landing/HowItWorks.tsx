@@ -78,15 +78,11 @@ export function HowItWorks() {
                   {/* Content card */}
                   <div
                     className={`flex-1 ${
-                      index % 2 === 0
-                        ? "md:text-right md:pr-12"
-                        : "md:text-left md:pl-12"
+                      index % 2 === 0 ? "md:text-right md:pr-12" : "md:text-left md:pl-12"
                     }`}
                   >
                     <h3 className="text-xl font-semibold">{step.title}</h3>
-                    <p className="mt-2 leading-relaxed text-muted-foreground">
-                      {step.description}
-                    </p>
+                    <p className="mt-2 leading-relaxed text-muted-foreground">{step.description}</p>
                   </div>
 
                   {/* Desktop timeline dot (centered) */}

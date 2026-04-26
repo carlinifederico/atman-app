@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { DEMO_MODE, DEMO_ACTIVATION, DEMO_WALLETS, DEMO_HEIRS, DEMO_DISTRIBUTIONS } from "@/lib/demo-data";
+import {
+  DEMO_MODE,
+  DEMO_ACTIVATION,
+  DEMO_WALLETS,
+  DEMO_HEIRS,
+  DEMO_DISTRIBUTIONS,
+} from "@/lib/demo-data";
 import { ACTIVATION_METHODS } from "@/lib/constants";
 import type { ActivationConfig } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,22 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Shield,
-  Clock,
-  Hand,
-  Users,
-  CheckCircle,
-  Zap,
-  Loader2,
-  ArrowRight,
-} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Shield, Clock, Hand, Users, CheckCircle, Zap, Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
 const methodIcons: Record<string, React.ElementType> = {
@@ -55,15 +47,12 @@ export default function ActivacionPage() {
   const [saving, setSaving] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
   const [simulating, setSimulating] = useState(false);
-  const [simulationResult, setSimulationResult] =
-    useState<SimulationResult | null>(null);
+  const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
   const [showSimModal, setShowSimModal] = useState(false);
   const [animatingIndex, setAnimatingIndex] = useState(-1);
 
   // Local form state
-  const [method, setMethod] = useState<"inactivity" | "manual" | "multisig">(
-    "inactivity"
-  );
+  const [method, setMethod] = useState<"inactivity" | "manual" | "multisig">("inactivity");
   const [inactivityDays, setInactivityDays] = useState(365);
   const [isActive, setIsActive] = useState(false);
 
@@ -77,11 +66,7 @@ export default function ActivacionPage() {
       setLoading(false);
       return;
     }
-    const { data } = await supabase
-      .from("activation_configs")
-      .select("*")
-      .limit(1)
-      .single();
+    const { data } = await supabase.from("activation_configs").select("*").limit(1).single();
 
     if (data) {
       setConfig(data);
@@ -101,7 +86,17 @@ export default function ActivacionPage() {
 
     if (DEMO_MODE) {
       const now = new Date().toISOString();
-      setConfig((prev) => prev ? { ...prev, method, inactivity_days: inactivityDays, is_active: isActive, updated_at: now } : prev);
+      setConfig((prev) =>
+        prev
+          ? {
+              ...prev,
+              method,
+              inactivity_days: inactivityDays,
+              is_active: isActive,
+              updated_at: now,
+            }
+          : prev
+      );
       toast.success("Configuracion guardada");
       setSaving(false);
       return;
@@ -135,11 +130,12 @@ export default function ActivacionPage() {
       } else {
         await supabase.from("activity_log").insert({
           user_id: user.id,
-          action: isActive !== config.is_active
-            ? isActive
-              ? "plan_activated"
-              : "plan_deactivated"
-            : "config_updated",
+          action:
+            isActive !== config.is_active
+              ? isActive
+                ? "plan_activated"
+                : "plan_deactivated"
+              : "config_updated",
           details: payload,
         });
         toast.success("Configuracion guardada");
@@ -272,10 +268,7 @@ export default function ActivacionPage() {
   };
 
   const daysSinceCheckIn = config?.last_check_in
-    ? Math.floor(
-        (Date.now() - new Date(config.last_check_in).getTime()) /
-          (1000 * 60 * 60 * 24)
-      )
+    ? Math.floor((Date.now() - new Date(config.last_check_in).getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
   if (loading) {
@@ -307,18 +300,15 @@ export default function ActivacionPage() {
                 selected
                   ? "border-gold/50 ring-1 ring-gold/30"
                   : m.disabled
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:border-white/20"
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:border-white/20"
               }`}
               onClick={() => {
                 if (!m.disabled) setMethod(m.value);
               }}
             >
               <CardContent className="flex flex-col items-center gap-3 py-6 text-center">
-                <Icon
-                  size={32}
-                  className={selected ? "text-gold" : "text-muted-foreground"}
-                />
+                <Icon size={32} className={selected ? "text-gold" : "text-muted-foreground"} />
                 <div>
                   <div className="flex items-center justify-center gap-2">
                     <h3 className="font-semibold">{m.label}</h3>
@@ -331,13 +321,9 @@ export default function ActivacionPage() {
                       </Badge>
                     )}
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {m.description}
-                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">{m.description}</p>
                 </div>
-                {selected && (
-                  <div className="h-1 w-8 rounded-full bg-gold" />
-                )}
+                {selected && <div className="h-1 w-8 rounded-full bg-gold" />}
               </CardContent>
             </Card>
           );
@@ -352,9 +338,7 @@ export default function ActivacionPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="inactivity_days">
-                Dias de inactividad antes de activar
-              </Label>
+              <Label htmlFor="inactivity_days">Dias de inactividad antes de activar</Label>
               <div className="flex items-center gap-3">
                 <Input
                   id="inactivity_days"
@@ -362,16 +346,14 @@ export default function ActivacionPage() {
                   min={1}
                   max={3650}
                   value={inactivityDays}
-                  onChange={(e) =>
-                    setInactivityDays(parseInt(e.target.value) || 365)
-                  }
+                  onChange={(e) => setInactivityDays(parseInt(e.target.value) || 365)}
                   className="w-32 bg-background border-white/10"
                 />
                 <span className="text-sm text-muted-foreground">dias</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Si no realizas un check-in en {inactivityDays} dias, el plan se
-                activara automaticamente.
+                Si no realizas un check-in en {inactivityDays} dias, el plan se activara
+                automaticamente.
               </p>
             </div>
           </CardContent>
@@ -386,15 +368,10 @@ export default function ActivacionPage() {
             <div>
               <h3 className="font-semibold">Activar Plan</h3>
               <p className="text-sm text-muted-foreground">
-                {isActive
-                  ? "Tu plan esta activo y monitoreando"
-                  : "Tu plan esta desactivado"}
+                {isActive ? "Tu plan esta activo y monitoreando" : "Tu plan esta desactivado"}
               </p>
             </div>
-            <Switch
-              checked={isActive}
-              onCheckedChange={setIsActive}
-            />
+            <Switch checked={isActive} onCheckedChange={setIsActive} />
           </div>
 
           {/* Last check-in */}
@@ -414,11 +391,11 @@ export default function ActivacionPage() {
               {daysSinceCheckIn !== null && (
                 <span
                   className={`text-2xl font-bold ${
-                    daysSinceCheckIn > (inactivityDays * 0.8)
+                    daysSinceCheckIn > inactivityDays * 0.8
                       ? "text-red-400"
-                      : daysSinceCheckIn > (inactivityDays * 0.5)
-                      ? "text-yellow-400"
-                      : "text-green-400"
+                      : daysSinceCheckIn > inactivityDays * 0.5
+                        ? "text-yellow-400"
+                        : "text-green-400"
                   }`}
                 >
                   {daysSinceCheckIn}d
@@ -448,19 +425,11 @@ export default function ActivacionPage() {
               variant="outline"
               className="border-gold/30 text-gold hover:bg-gold/10"
             >
-              {simulating ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <Zap size={16} />
-              )}
+              {simulating ? <Loader2 size={16} className="animate-spin" /> : <Zap size={16} />}
               Simular Activacion
             </Button>
 
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              variant="secondary"
-            >
+            <Button onClick={handleSave} disabled={saving} variant="secondary">
               {saving ? "Guardando..." : "Guardar Configuracion"}
             </Button>
           </div>
@@ -479,12 +448,8 @@ export default function ActivacionPage() {
           {simulationResult && (
             <div className="space-y-4">
               <div className="flex gap-4 text-sm text-muted-foreground">
-                <span>
-                  Billeteras: {simulationResult.total_wallets}
-                </span>
-                <span>
-                  Herederos: {simulationResult.total_heirs}
-                </span>
+                <span>Billeteras: {simulationResult.total_wallets}</span>
+                <span>Herederos: {simulationResult.total_heirs}</span>
               </div>
 
               <div className="space-y-3 max-h-[400px] overflow-y-auto">
@@ -500,21 +465,13 @@ export default function ActivacionPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 text-sm">
                         <span className="font-medium">{t.wallet_label}</span>
-                        <span className="text-xs text-muted-foreground">
-                          ({t.blockchain})
-                        </span>
+                        <span className="text-xs text-muted-foreground">({t.blockchain})</span>
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-muted-foreground">
-                          {t.amount.toFixed(4)}
-                        </span>
+                        <span className="text-xs text-muted-foreground">{t.amount.toFixed(4)}</span>
                         <ArrowRight size={12} className="text-gold" />
-                        <span className="text-xs font-medium">
-                          {t.heir_name}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          ({t.percentage}%)
-                        </span>
+                        <span className="text-xs font-medium">{t.heir_name}</span>
+                        <span className="text-xs text-muted-foreground">({t.percentage}%)</span>
                       </div>
                     </div>
                     {i <= animatingIndex && (

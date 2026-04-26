@@ -38,8 +38,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            Tu legado digital,{" "}
-            <span className="text-gradient-gold">protegido para siempre</span>
+            Tu legado digital, <span className="text-gradient-gold">protegido para siempre</span>
           </motion.h1>
 
           <motion.p
@@ -48,9 +47,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.45 }}
           >
-            Asegura la transferencia de tus criptoactivos a tus herederos de
-            forma segura y automatizada. Porque tu patrimonio digital merece el
-            mismo cuidado que el fisico.
+            Asegura la transferencia de tus criptoactivos a tus herederos de forma segura y
+            automatizada. Porque tu patrimonio digital merece el mismo cuidado que el fisico.
           </motion.p>
 
           <motion.div
@@ -104,7 +102,10 @@ export function Hero() {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="relative">
                 <Shield className="h-20 w-20 text-gold/80 sm:h-24 sm:w-24" strokeWidth={1.2} />
-                <Lock className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 text-gold sm:h-10 sm:w-10" strokeWidth={1.5} />
+                <Lock
+                  className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 text-gold sm:h-10 sm:w-10"
+                  strokeWidth={1.5}
+                />
               </div>
             </div>
 

@@ -17,10 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "El correo es obligatorio")
-    .email("Ingresa un correo valido"),
+  email: z.string().min(1, "El correo es obligatorio").email("Ingresa un correo valido"),
   password: z
     .string()
     .min(1, "La contrasena es obligatoria")
@@ -74,9 +71,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md border-border bg-card">
         <CardHeader className="flex flex-col items-center gap-4 pb-2">
           <Logo />
-          <CardTitle className="text-2xl font-bold text-foreground">
-            Iniciar Sesion
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold text-foreground">Iniciar Sesion</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -90,11 +85,7 @@ export default function LoginPage() {
                 disabled={isLoading}
                 {...register("email")}
               />
-              {errors.email && (
-                <p className="text-sm text-destructive">
-                  {errors.email.message}
-                </p>
-              )}
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
@@ -108,18 +99,11 @@ export default function LoginPage() {
                 {...register("password")}
               />
               {errors.password && (
-                <p className="text-sm text-destructive">
-                  {errors.password.message}
-                </p>
+                <p className="text-sm text-destructive">{errors.password.message}</p>
               )}
             </div>
 
-            <Button
-              type="submit"
-              className="w-full glow-gold"
-              size="lg"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full glow-gold" size="lg" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

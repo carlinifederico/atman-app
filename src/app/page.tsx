@@ -19,11 +19,7 @@ export default function Home() {
           <Logo />
           <nav className="flex items-center gap-2">
             {DEMO_MODE ? (
-              <Button
-                size="sm"
-                className="glow-gold font-semibold"
-                render={<Link href="/panel" />}
-              >
+              <Button size="sm" className="glow-gold font-semibold" render={<Link href="/panel" />}>
                 Entrar al Demo
               </Button>
             ) : (
@@ -63,27 +59,16 @@ export default function Home() {
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex flex-col items-center gap-2 md:items-start">
               <Logo />
-              <p className="text-sm text-muted-foreground">
-                Herencia digital para criptoactivos
-              </p>
+              <p className="text-sm text-muted-foreground">Herencia digital para criptoactivos</p>
             </div>
             <div className="flex gap-8 text-sm text-muted-foreground">
-              <a
-                href="#caracteristicas"
-                className="transition-colors hover:text-foreground"
-              >
+              <a href="#caracteristicas" className="transition-colors hover:text-foreground">
                 Caracteristicas
               </a>
-              <a
-                href="#como-funciona"
-                className="transition-colors hover:text-foreground"
-              >
+              <a href="#como-funciona" className="transition-colors hover:text-foreground">
                 Como funciona
               </a>
-              <a
-                href="#seguridad"
-                className="transition-colors hover:text-foreground"
-              >
+              <a href="#seguridad" className="transition-colors hover:text-foreground">
                 Seguridad
               </a>
             </div>

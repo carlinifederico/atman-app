@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useHeirs } from "@/hooks/useHeirs";
 import { useWallets } from "@/hooks/useWallets";
 import { useDistribution } from "@/hooks/useDistribution";
@@ -26,9 +26,7 @@ export default function VistaHerederoPage() {
   const selectedHeir = heirs.find((h) => h.id === selectedHeirId);
 
   // Get distributions for this heir
-  const heirDistributions = distributions.filter(
-    (d) => d.heir_id === selectedHeirId
-  );
+  const heirDistributions = distributions.filter((d) => d.heir_id === selectedHeirId);
 
   // Build wallet info for the preview
   const assignedWallets = heirDistributions.map((d: Distribution) => {
@@ -67,10 +65,7 @@ export default function VistaHerederoPage() {
         <CardContent className="pt-6">
           <div className="space-y-2">
             <Label>Seleccionar heredero</Label>
-            <Select
-              value={selectedHeirId}
-              onValueChange={(val) => setSelectedHeirId(val ?? "")}
-            >
+            <Select value={selectedHeirId} onValueChange={(val) => setSelectedHeirId(val ?? "")}>
               <SelectTrigger className="bg-background border-white/10">
                 <SelectValue placeholder="Elige un heredero para previsualizar" />
               </SelectTrigger>
@@ -95,9 +90,7 @@ export default function VistaHerederoPage() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 ring-2 ring-gold/30">
                 <Shield size={32} className="text-gold" />
               </div>
-              <h2 className="text-2xl font-bold tracking-wider text-gradient-gold">
-                ATMAN
-              </h2>
+              <h2 className="text-2xl font-bold tracking-wider text-gradient-gold">ATMAN</h2>
               <p className="mt-1 text-xs text-muted-foreground tracking-widest uppercase">
                 Herencia Digital Segura
               </p>
@@ -107,17 +100,13 @@ export default function VistaHerederoPage() {
               {/* Message */}
               <div className="rounded-lg border border-gold/20 bg-gold/5 p-4 text-center">
                 <Gift size={24} className="mx-auto mb-2 text-gold" />
-                <p className="text-sm font-medium">
-                  Has sido designado como heredero digital
-                </p>
+                <p className="text-sm font-medium">Has sido designado como heredero digital</p>
               </div>
 
               {/* Heir info */}
               <div className="space-y-2 text-center">
                 <h3 className="text-xl font-bold">{selectedHeir.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {selectedHeir.email}
-                </p>
+                <p className="text-sm text-muted-foreground">{selectedHeir.email}</p>
                 <span className="inline-block rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold">
                   {selectedHeir.relationship}
                 </span>
@@ -144,16 +133,12 @@ export default function VistaHerederoPage() {
                             <p className="text-sm font-medium">{aw.label}</p>
                             <p className="text-xs text-muted-foreground">
                               {aw.blockchain} -{" "}
-                              {BLOCKCHAINS.find(
-                                (b) => b.value === aw.blockchain
-                              )?.icon ?? ""}
+                              {BLOCKCHAINS.find((b) => b.value === aw.blockchain)?.icon ?? ""}
                             </p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-bold">
-                            {aw.amount.toFixed(4)}
-                          </p>
+                          <p className="text-sm font-bold">{aw.amount.toFixed(4)}</p>
                           <p className="text-xs text-gold">{aw.percentage}%</p>
                         </div>
                       </div>
@@ -162,25 +147,16 @@ export default function VistaHerederoPage() {
                     {/* Total */}
                     <div className="mt-2 rounded-lg border border-gold/20 bg-gold/5 p-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          Porcentaje Total Asignado
-                        </span>
+                        <span className="text-sm font-medium">Porcentaje Total Asignado</span>
                         <span className="text-lg font-bold text-gold">
-                          {assignedWallets.reduce(
-                            (sum, aw) => sum + aw.percentage,
-                            0
-                          )}
-                          %
+                          {assignedWallets.reduce((sum, aw) => sum + aw.percentage, 0)}%
                         </span>
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div className="rounded-lg border border-white/10 p-6 text-center">
-                    <Wallet
-                      size={32}
-                      className="mx-auto mb-2 text-muted-foreground"
-                    />
+                    <Wallet size={32} className="mx-auto mb-2 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
                       Este heredero no tiene activos asignados todavia
                     </p>
@@ -191,9 +167,8 @@ export default function VistaHerederoPage() {
               {/* Footer */}
               <div className="border-t border-white/10 pt-4 text-center">
                 <p className="text-[10px] text-muted-foreground">
-                  Este es un mensaje de vista previa generado por ATMAN. La
-                  transferencia real se realizara cuando se active el plan de
-                  herencia digital.
+                  Este es un mensaje de vista previa generado por ATMAN. La transferencia real se
+                  realizara cuando se active el plan de herencia digital.
                 </p>
               </div>
             </CardContent>

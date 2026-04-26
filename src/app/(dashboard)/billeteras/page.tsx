@@ -40,8 +40,7 @@ const walletSchema = z.object({
 type WalletFormData = z.infer<typeof walletSchema>;
 
 export default function BilleterasPage() {
-  const { wallets, loading, addWallet, updateWallet, deleteWallet } =
-    useWallets();
+  const { wallets, loading, addWallet, updateWallet, deleteWallet } = useWallets();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingWallet, setEditingWallet] = useState<Wallet | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -51,7 +50,6 @@ export default function BilleterasPage() {
     handleSubmit,
     reset,
     control,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<WalletFormData>({
     resolver: zodResolver(walletSchema) as never,
@@ -156,18 +154,14 @@ export default function BilleterasPage() {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger
             onClick={openCreate}
-            render={
-              <Button className="glow-gold bg-gold text-black hover:bg-gold-light" />
-            }
+            render={<Button className="glow-gold bg-gold text-black hover:bg-gold-light" />}
           >
             <Plus size={16} />
             Agregar Billetera
           </DialogTrigger>
           <DialogContent className="bg-card border-white/10">
             <DialogHeader>
-              <DialogTitle>
-                {editingWallet ? "Editar Billetera" : "Agregar Billetera"}
-              </DialogTitle>
+              <DialogTitle>{editingWallet ? "Editar Billetera" : "Agregar Billetera"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
@@ -178,9 +172,7 @@ export default function BilleterasPage() {
                   {...register("label")}
                   className="bg-background border-white/10"
                 />
-                {errors.label && (
-                  <p className="text-xs text-red-400">{errors.label.message}</p>
-                )}
+                {errors.label && <p className="text-xs text-red-400">{errors.label.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -189,10 +181,7 @@ export default function BilleterasPage() {
                   control={control}
                   name="blockchain"
                   render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={(val) => field.onChange(val ?? "")}
-                    >
+                    <Select value={field.value} onValueChange={(val) => field.onChange(val ?? "")}>
                       <SelectTrigger className="w-full bg-background border-white/10">
                         <SelectValue placeholder="Seleccionar blockchain" />
                       </SelectTrigger>
@@ -207,9 +196,7 @@ export default function BilleterasPage() {
                   )}
                 />
                 {errors.blockchain && (
-                  <p className="text-xs text-red-400">
-                    {errors.blockchain.message}
-                  </p>
+                  <p className="text-xs text-red-400">{errors.blockchain.message}</p>
                 )}
               </div>
 
@@ -221,11 +208,7 @@ export default function BilleterasPage() {
                   className="bg-background border-white/10 font-mono text-sm"
                   {...register("address")}
                 />
-                {errors.address && (
-                  <p className="text-xs text-red-400">
-                    {errors.address.message}
-                  </p>
-                )}
+                {errors.address && <p className="text-xs text-red-400">{errors.address.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -238,11 +221,7 @@ export default function BilleterasPage() {
                   className="bg-background border-white/10"
                   {...register("balance", { valueAsNumber: true })}
                 />
-                {errors.balance && (
-                  <p className="text-xs text-red-400">
-                    {errors.balance.message}
-                  </p>
-                )}
+                {errors.balance && <p className="text-xs text-red-400">{errors.balance.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -256,11 +235,7 @@ export default function BilleterasPage() {
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setDialogOpen(false)}
-                >
+                <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)}>
                   Cancelar
                 </Button>
                 <Button
@@ -268,11 +243,7 @@ export default function BilleterasPage() {
                   disabled={isSubmitting}
                   className="bg-gold text-black hover:bg-gold-light"
                 >
-                  {isSubmitting
-                    ? "Guardando..."
-                    : editingWallet
-                    ? "Actualizar"
-                    : "Agregar"}
+                  {isSubmitting ? "Guardando..." : editingWallet ? "Actualizar" : "Agregar"}
                 </Button>
               </div>
             </form>
@@ -284,13 +255,8 @@ export default function BilleterasPage() {
         <Card className="bg-card border-white/10">
           <CardContent className="flex flex-col items-center gap-4 py-16">
             <WalletIcon size={48} className="text-muted-foreground" />
-            <p className="text-lg text-muted-foreground">
-              No tienes billeteras registradas
-            </p>
-            <Button
-              onClick={openCreate}
-              className="bg-gold text-black hover:bg-gold-light"
-            >
+            <p className="text-lg text-muted-foreground">No tienes billeteras registradas</p>
+            <Button onClick={openCreate} className="bg-gold text-black hover:bg-gold-light">
               <Plus size={16} />
               Agregar tu primera billetera
             </Button>
@@ -311,11 +277,7 @@ export default function BilleterasPage() {
                   </span>
                 </div>
                 <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => openEdit(wallet)}
-                  >
+                  <Button variant="ghost" size="icon-sm" onClick={() => openEdit(wallet)}>
                     <Pencil size={14} />
                   </Button>
                   <Button
@@ -345,8 +307,7 @@ export default function BilleterasPage() {
                 <div className="flex items-baseline gap-1">
                   <span className="text-2xl font-bold">{wallet.balance}</span>
                   <span className="text-sm text-muted-foreground">
-                    {BLOCKCHAINS.find((b) => b.value === wallet.blockchain)
-                      ?.icon ?? ""}
+                    {BLOCKCHAINS.find((b) => b.value === wallet.blockchain)?.icon ?? ""}
                   </span>
                 </div>
                 {wallet.encrypted_notes && (

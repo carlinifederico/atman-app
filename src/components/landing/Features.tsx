@@ -40,8 +40,7 @@ export function Features() {
             <span className="text-gradient-gold">proteger tu legado</span>
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Una plataforma completa para gestionar la herencia de tus activos
-            digitales
+            Una plataforma completa para gestionar la herencia de tus activos digitales
           </p>
         </motion.div>
 
@@ -59,9 +58,7 @@ export function Features() {
                 <feature.icon className="h-6 w-6" />
               </div>
               <h3 className="mb-3 text-xl font-semibold">{feature.title}</h3>
-              <p className="leading-relaxed text-muted-foreground">
-                {feature.description}
-              </p>
+              <p className="leading-relaxed text-muted-foreground">{feature.description}</p>
             </motion.div>
           ))}
         </div>

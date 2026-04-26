@@ -79,11 +79,7 @@ function SidebarContent({
   );
 }
 
-export default function DashboardShell({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -144,11 +140,7 @@ export default function DashboardShell({
         <header className="flex h-16 items-center gap-4 border-b border-white/10 bg-[#0E0E15] px-4 md:px-6">
           {/* Mobile hamburger */}
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-            <SheetTrigger
-              render={
-                <Button variant="ghost" size="icon" className="md:hidden" />
-              }
-            >
+            <SheetTrigger render={<Button variant="ghost" size="icon" className="md:hidden" />}>
               <Menu size={20} />
             </SheetTrigger>
             <SheetContent side="left" className="w-64 p-0">
@@ -165,9 +157,7 @@ export default function DashboardShell({
           <div className="ml-auto flex items-center gap-3">
             <span className="text-sm text-muted-foreground">{email}</span>
             <div className="h-8 w-8 rounded-full bg-gold/20 flex items-center justify-center">
-              <span className="text-xs font-bold text-gold">
-                {email?.charAt(0).toUpperCase()}
-              </span>
+              <span className="text-xs font-bold text-gold">{email?.charAt(0).toUpperCase()}</span>
             </div>
           </div>
         </header>
