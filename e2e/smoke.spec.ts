@@ -39,4 +39,33 @@ test.describe("ATMAN demo flow", () => {
       await expect(page.getByText(/Borrador.*pendiente de revisión legal/i)).toBeVisible();
     }
   });
+
+  test("vault: empty state shows trust banner and crypto details", async ({ page }) => {
+    await page.goto("/vault");
+    await expect(page.getByText(/AES-GCM-256/i)).toBeVisible();
+    await expect(page.getByText(/PBKDF2-SHA256/i)).toBeVisible();
+    await expect(page.getByText(/Todavía no tenés instrucciones cifradas/i)).toBeVisible();
+  });
+
+  test("vault: encrypt and decrypt round-trip", async ({ page }) => {
+    await page.goto("/vault");
+    await page.getByRole("button", { name: /Nueva Instrucción/i }).click();
+
+    // Pick first heir from select
+    await page.getByText("Seleccionar heredero").click();
+    await page.getByRole("option").first().click();
+
+    await page.getByLabel("Etiqueta").fill("test entry");
+    await page.getByLabel("Instrucciones (texto plano)").fill("Mensaje secreto para test");
+    await page.getByLabel(/Passphrase del vault/i).fill("contraseña-segura-test-123");
+
+    await page.getByRole("button", { name: /Cifrar y guardar/i }).click();
+    await expect(page.getByText("test entry")).toBeVisible();
+
+    // Decrypt round-trip
+    await page.getByRole("button", { name: "Ver" }).click();
+    await page.getByLabel("Passphrase").fill("contraseña-segura-test-123");
+    await page.getByRole("button", { name: "Descifrar" }).click();
+    await expect(page.getByText("Mensaje secreto para test")).toBeVisible();
+  });
 });

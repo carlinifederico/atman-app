@@ -14,6 +14,7 @@ import {
   PieChart,
   Shield,
   Eye,
+  Lock,
   LogOut,
   Menu,
   Loader2,
@@ -24,6 +25,7 @@ const navLinks = [
   { href: "/billeteras", label: "Billeteras", icon: Wallet },
   { href: "/herederos", label: "Herederos", icon: Users },
   { href: "/distribucion", label: "Distribucion", icon: PieChart },
+  { href: "/vault", label: "Vault", icon: Lock },
   { href: "/activacion", label: "Activacion", icon: Shield },
   { href: "/vista-heredero", label: "Vista Heredero", icon: Eye },
 ];

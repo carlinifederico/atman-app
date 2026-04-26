@@ -79,3 +79,16 @@ export interface DistributionWithDetails extends Distribution {
   wallet?: Wallet;
   heir?: Heir;
 }
+
+export interface VaultEntry {
+  id: string;
+  user_id: string;
+  heir_id: string;
+  label: string;
+  algo: string;
+  ciphertext: string;
+  nonce: string;
+  salt: string;
+  created_at: string;
+  updated_at: string;
+}
