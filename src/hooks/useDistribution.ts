@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { DEMO_MODE, DEMO_DISTRIBUTIONS } from "@/lib/demo-data";
+import { totalPercentage as sumPercentages } from "@/lib/distribution";
 import type { Distribution } from "@/lib/types";
 
 export function useDistribution(walletId?: string) {
@@ -89,7 +90,7 @@ export function useDistribution(walletId?: string) {
     return { data, error };
   };
 
-  const totalPercentage = distributions.reduce((sum, d) => sum + d.percentage, 0);
+  const totalPercentage = sumPercentages(distributions);
 
   return {
     distributions,

@@ -44,7 +44,7 @@ export default function DistribucionPage() {
     }
   }, [distributions, heirs, distLoading]);
 
-  const totalPercentage = Object.values(percentages).reduce((sum, p) => sum + p, 0);
+  const totalPercentage = Object.values(percentages).reduce<number>((sum, p) => sum + p, 0);
 
   const handleSliderChange = (heirId: string, value: number | readonly number[]) => {
     const val = Array.isArray(value) ? value[0] : value;
