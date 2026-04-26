@@ -20,6 +20,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Shield, Clock, Hand, Users, CheckCircle, Zap, Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { getMailer, composeHeirNotification } from "@/lib/notifications/mailer";
+import { DEMO_USER } from "@/lib/demo-data";
 
 const methodIcons: Record<string, React.ElementType> = {
   inactivity: Clock,
@@ -228,6 +230,25 @@ export default function ActivacionPage() {
         await new Promise((resolve) => setTimeout(resolve, 800));
         setAnimatingIndex(i);
       }
+      // Queue notification preview per heir who is receiving anything
+      const mailer = getMailer();
+      const ownerName = DEMO_USER.user_metadata?.full_name ?? DEMO_USER.email ?? "Tu usuario ATMAN";
+      const heirIds = new Set(DEMO_DISTRIBUTIONS.map((d) => d.heir_id));
+      for (const heirId of heirIds) {
+        const heir = DEMO_HEIRS.find((h) => h.id === heirId);
+        if (!heir) continue;
+        const labels = DEMO_DISTRIBUTIONS.filter((d) => d.heir_id === heirId).map((d) => {
+          const w = DEMO_WALLETS.find((w) => w.id === d.wallet_id);
+          return `${w?.label ?? "Billetera"} (${d.percentage}%)`;
+        });
+        const { subject, body } = composeHeirNotification({
+          heir,
+          ownerName,
+          vaultEntryLabels: labels,
+        });
+        await mailer.send({ to: heir.email, channel: "email", subject, body });
+      }
+      toast.success(`${heirIds.size} notificación(es) encoladas al outbox`);
       setSimulating(false);
       return;
     }

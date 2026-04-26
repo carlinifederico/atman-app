@@ -15,6 +15,7 @@ import {
   Shield,
   Eye,
   Lock,
+  Inbox,
   LogOut,
   Menu,
   Loader2,
@@ -28,6 +29,7 @@ const navLinks = [
   { href: "/vault", label: "Vault", icon: Lock },
   { href: "/activacion", label: "Activacion", icon: Shield },
   { href: "/vista-heredero", label: "Vista Heredero", icon: Eye },
+  { href: "/outbox", label: "Outbox", icon: Inbox },
 ];
 
 function SidebarContent({

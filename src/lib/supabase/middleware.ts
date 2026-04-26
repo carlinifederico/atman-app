@@ -47,6 +47,8 @@ export async function updateSession(request: NextRequest) {
     "/distribucion",
     "/activacion",
     "/vista-heredero",
+    "/vault",
+    "/outbox",
   ];
   const isProtected = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path));
 
