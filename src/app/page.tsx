@@ -61,7 +61,7 @@ export default function Home() {
               <Logo />
               <p className="text-sm text-muted-foreground">Herencia digital para criptoactivos</p>
             </div>
-            <div className="flex gap-8 text-sm text-muted-foreground">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <a href="#caracteristicas" className="transition-colors hover:text-foreground">
                 Caracteristicas
               </a>
@@ -71,10 +71,19 @@ export default function Home() {
               <a href="#seguridad" className="transition-colors hover:text-foreground">
                 Seguridad
               </a>
+              <Link href="/terminos" className="transition-colors hover:text-foreground">
+                Términos
+              </Link>
+              <Link href="/privacidad" className="transition-colors hover:text-foreground">
+                Privacidad
+              </Link>
+              <Link href="/disclaimer-cripto" className="transition-colors hover:text-foreground">
+                Cripto
+              </Link>
             </div>
           </div>
           <div className="mt-8 border-t border-border/50 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} ATMAN. Todos los derechos reservados.</p>
+            <p>&copy; 2026 ATMAN. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>

@@ -32,4 +32,11 @@ test.describe("ATMAN demo flow", () => {
     await page.goto("/distribucion");
     await expect(page.getByText(/Seleccionar billetera/i)).toBeVisible();
   });
+
+  test("legal pages render with draft banner", async ({ page }) => {
+    for (const path of ["/terminos", "/privacidad", "/disclaimer-cripto"]) {
+      await page.goto(path);
+      await expect(page.getByText(/Borrador.*pendiente de revisión legal/i)).toBeVisible();
+    }
+  });
 });
