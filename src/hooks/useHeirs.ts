@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { DEMO_MODE, DEMO_HEIRS } from "@/lib/demo-data";
 import type { Heir } from "@/lib/types";
@@ -8,19 +9,25 @@ import type { Heir } from "@/lib/types";
 export function useHeirs() {
   const [heirs, setHeirs] = useState<Heir[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   const fetchHeirs = useCallback(async () => {
     setLoading(true);
+    setError(null);
     if (DEMO_MODE) {
       setHeirs(DEMO_HEIRS);
       setLoading(false);
       return;
     }
-    const { data } = await supabase
+    const { data, error: fetchError } = await supabase
       .from("heirs")
       .select("*")
       .order("created_at", { ascending: false });
+    if (fetchError) {
+      setError(fetchError.message);
+      toast.error("No se pudieron cargar los herederos");
+    }
     setHeirs(data ?? []);
     setLoading(false);
   }, [supabase]);
@@ -124,5 +131,5 @@ export function useHeirs() {
     return { error };
   };
 
-  return { heirs, loading, addHeir, updateHeir, deleteHeir, refetch: fetchHeirs };
+  return { heirs, loading, error, addHeir, updateHeir, deleteHeir, refetch: fetchHeirs };
 }

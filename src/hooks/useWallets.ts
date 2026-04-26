@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { DEMO_MODE, DEMO_WALLETS } from "@/lib/demo-data";
 import type { Wallet } from "@/lib/types";
@@ -8,19 +9,25 @@ import type { Wallet } from "@/lib/types";
 export function useWallets() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   const fetchWallets = useCallback(async () => {
     setLoading(true);
+    setError(null);
     if (DEMO_MODE) {
       setWallets(DEMO_WALLETS);
       setLoading(false);
       return;
     }
-    const { data } = await supabase
+    const { data, error: fetchError } = await supabase
       .from("wallets")
       .select("*")
       .order("created_at", { ascending: false });
+    if (fetchError) {
+      setError(fetchError.message);
+      toast.error("No se pudieron cargar las billeteras");
+    }
     setWallets(data ?? []);
     setLoading(false);
   }, [supabase]);
@@ -126,5 +133,5 @@ export function useWallets() {
     return { error };
   };
 
-  return { wallets, loading, addWallet, updateWallet, deleteWallet, refetch: fetchWallets };
+  return { wallets, loading, error, addWallet, updateWallet, deleteWallet, refetch: fetchWallets };
 }

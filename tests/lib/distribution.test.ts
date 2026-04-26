@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  totalPercentage,
-  isValidDistribution,
-  groupByWallet,
-} from "@/lib/distribution";
+import { totalPercentage, isValidDistribution, groupByWallet } from "@/lib/distribution";
 import { DEMO_DISTRIBUTIONS } from "@/lib/demo-data";
 
 describe("totalPercentage", () => {
@@ -16,7 +12,9 @@ describe("totalPercentage", () => {
   });
 
   it("handles fractional percentages", () => {
-    expect(totalPercentage([{ percentage: 33.3 }, { percentage: 33.3 }, { percentage: 33.4 }])).toBeCloseTo(100, 5);
+    expect(
+      totalPercentage([{ percentage: 33.3 }, { percentage: 33.3 }, { percentage: 33.4 }])
+    ).toBeCloseTo(100, 5);
   });
 });
 

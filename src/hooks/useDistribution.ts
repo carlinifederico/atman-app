@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { DEMO_MODE, DEMO_DISTRIBUTIONS } from "@/lib/demo-data";
 import { totalPercentage as sumPercentages } from "@/lib/distribution";
@@ -9,10 +10,12 @@ import type { Distribution } from "@/lib/types";
 export function useDistribution(walletId?: string) {
   const [distributions, setDistributions] = useState<Distribution[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   const fetchDistributions = useCallback(async () => {
     setLoading(true);
+    setError(null);
     if (DEMO_MODE) {
       const filtered = walletId
         ? DEMO_DISTRIBUTIONS.filter((d) => d.wallet_id === walletId)
@@ -25,7 +28,11 @@ export function useDistribution(walletId?: string) {
     if (walletId) {
       query = query.eq("wallet_id", walletId);
     }
-    const { data } = await query.order("created_at", { ascending: true });
+    const { data, error: fetchError } = await query.order("created_at", { ascending: true });
+    if (fetchError) {
+      setError(fetchError.message);
+      toast.error("No se pudieron cargar las distribuciones");
+    }
     setDistributions(data ?? []);
     setLoading(false);
   }, [supabase, walletId]);
@@ -95,6 +102,7 @@ export function useDistribution(walletId?: string) {
   return {
     distributions,
     loading,
+    error,
     saveDistributions,
     totalPercentage,
     refetch: fetchDistributions,
