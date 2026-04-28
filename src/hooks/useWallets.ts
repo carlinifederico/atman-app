@@ -4,19 +4,31 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { DEMO_MODE, DEMO_WALLETS } from "@/lib/demo-data";
+import { readScopedOrSeed, writeScoped } from "@/lib/demo-storage";
 import type { Wallet } from "@/lib/types";
 
+const BUCKET = "wallets";
+
 export function useWallets() {
-  const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [wallets, setWalletsState] = useState<Wallet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
+
+  // Wrapper that mirrors state to localStorage in DEMO_MODE
+  const setWallets = useCallback((next: Wallet[] | ((prev: Wallet[]) => Wallet[])) => {
+    setWalletsState((prev) => {
+      const value = typeof next === "function" ? (next as (p: Wallet[]) => Wallet[])(prev) : next;
+      if (DEMO_MODE) writeScoped(BUCKET, value);
+      return value;
+    });
+  }, []);
 
   const fetchWallets = useCallback(async () => {
     setLoading(true);
     setError(null);
     if (DEMO_MODE) {
-      setWallets(DEMO_WALLETS);
+      setWalletsState(readScopedOrSeed<Wallet[]>(BUCKET, DEMO_WALLETS));
       setLoading(false);
       return;
     }
@@ -30,7 +42,7 @@ export function useWallets() {
     }
     setWallets(data ?? []);
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, setWallets]);
 
   useEffect(() => {
     queueMicrotask(() => {

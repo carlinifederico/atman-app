@@ -45,7 +45,7 @@ export default function OutboxPage() {
         )}
       </div>
 
-      <Card className="border-yellow-500/30 bg-yellow-500/5">
+      <Card data-tour="outbox-banner" className="border-yellow-500/30 bg-yellow-500/5">
         <CardContent className="flex items-start gap-3 py-4 text-sm text-yellow-200/90">
           <AlertTriangle size={18} className="mt-0.5 shrink-0 text-yellow-400" />
           <div>

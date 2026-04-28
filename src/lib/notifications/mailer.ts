@@ -8,6 +8,7 @@
  */
 
 import type { Heir } from "@/lib/types";
+import { readScoped, writeScoped } from "@/lib/demo-storage";
 
 export type Channel = "email" | "sms";
 
@@ -27,31 +28,32 @@ export interface Mailer {
   clear(): void;
 }
 
-const STORAGE_KEY = "atman_outbox_demo";
+const BUCKET = "outbox";
 
 function readOutbox(): OutboxMessage[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as OutboxMessage[]) : [];
-  } catch {
-    return [];
-  }
+  return readScoped<OutboxMessage[]>(BUCKET, []);
 }
 
 function writeOutbox(msgs: OutboxMessage[]) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs));
+  writeScoped(BUCKET, msgs);
 }
 
 class StubMailer implements Mailer {
   private memory: OutboxMessage[] = [];
 
   constructor() {
+    // Don't read at construction — identity may not be known yet.
+    // outbox() and send() pull fresh from storage so identity changes
+    // between sessions are reflected.
+    this.memory = [];
+  }
+
+  private sync(): void {
     this.memory = readOutbox();
   }
 
   async send(msg: Omit<OutboxMessage, "id" | "sent_at" | "status">): Promise<OutboxMessage> {
+    this.sync();
     const queued: OutboxMessage = {
       ...msg,
       id: `m_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
@@ -64,6 +66,7 @@ class StubMailer implements Mailer {
   }
 
   outbox(): OutboxMessage[] {
+    this.sync();
     return [...this.memory];
   }
 

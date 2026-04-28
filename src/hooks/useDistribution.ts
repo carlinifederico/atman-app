@@ -4,23 +4,44 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { DEMO_MODE, DEMO_DISTRIBUTIONS } from "@/lib/demo-data";
+import { readScopedOrSeed, writeScoped } from "@/lib/demo-storage";
 import { totalPercentage as sumPercentages } from "@/lib/distribution";
 import type { Distribution } from "@/lib/types";
 
+const BUCKET = "distributions";
+
 export function useDistribution(walletId?: string) {
-  const [distributions, setDistributions] = useState<Distribution[]>([]);
+  const [distributions, setDistributionsState] = useState<Distribution[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
+
+  // Wrapper persists ALL distributions (unfiltered) to localStorage in DEMO_MODE,
+  // even when the hook is filtered by walletId. State holds only the filtered slice.
+  const setDistributions = useCallback(
+    (next: Distribution[]) => {
+      setDistributionsState(next);
+      if (DEMO_MODE) {
+        // Re-merge into the full set: drop entries for walletId (if filtered) and append new
+        if (walletId) {
+          const all = readScopedOrSeed<Distribution[]>(BUCKET, DEMO_DISTRIBUTIONS);
+          const others = all.filter((d) => d.wallet_id !== walletId);
+          writeScoped(BUCKET, [...others, ...next]);
+        } else {
+          writeScoped(BUCKET, next);
+        }
+      }
+    },
+    [walletId]
+  );
 
   const fetchDistributions = useCallback(async () => {
     setLoading(true);
     setError(null);
     if (DEMO_MODE) {
-      const filtered = walletId
-        ? DEMO_DISTRIBUTIONS.filter((d) => d.wallet_id === walletId)
-        : DEMO_DISTRIBUTIONS;
-      setDistributions(filtered);
+      const all = readScopedOrSeed<Distribution[]>(BUCKET, DEMO_DISTRIBUTIONS);
+      const filtered = walletId ? all.filter((d) => d.wallet_id === walletId) : all;
+      setDistributionsState(filtered);
       setLoading(false);
       return;
     }
@@ -35,7 +56,7 @@ export function useDistribution(walletId?: string) {
     }
     setDistributions(data ?? []);
     setLoading(false);
-  }, [supabase, walletId]);
+  }, [supabase, walletId, setDistributions]);
 
   useEffect(() => {
     queueMicrotask(() => {

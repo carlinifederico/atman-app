@@ -310,7 +310,7 @@ export default function ActivacionPage() {
       </div>
 
       {/* Method selector */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div data-tour="activation-methods" className="grid gap-4 sm:grid-cols-3">
         {ACTIVATION_METHODS.map((m) => {
           const Icon = methodIcons[m.value] ?? Shield;
           const selected = method === m.value;
@@ -444,6 +444,7 @@ export default function ActivacionPage() {
               onClick={handleSimulate}
               disabled={simulating}
               variant="outline"
+              data-tour="simulate-button"
               className="border-gold/30 text-gold hover:bg-gold/10"
             >
               {simulating ? <Loader2 size={16} className="animate-spin" /> : <Zap size={16} />}

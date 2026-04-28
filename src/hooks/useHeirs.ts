@@ -4,19 +4,30 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { DEMO_MODE, DEMO_HEIRS } from "@/lib/demo-data";
+import { readScopedOrSeed, writeScoped } from "@/lib/demo-storage";
 import type { Heir } from "@/lib/types";
 
+const BUCKET = "heirs";
+
 export function useHeirs() {
-  const [heirs, setHeirs] = useState<Heir[]>([]);
+  const [heirs, setHeirsState] = useState<Heir[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
+
+  const setHeirs = useCallback((next: Heir[] | ((prev: Heir[]) => Heir[])) => {
+    setHeirsState((prev) => {
+      const value = typeof next === "function" ? (next as (p: Heir[]) => Heir[])(prev) : next;
+      if (DEMO_MODE) writeScoped(BUCKET, value);
+      return value;
+    });
+  }, []);
 
   const fetchHeirs = useCallback(async () => {
     setLoading(true);
     setError(null);
     if (DEMO_MODE) {
-      setHeirs(DEMO_HEIRS);
+      setHeirsState(readScopedOrSeed<Heir[]>(BUCKET, DEMO_HEIRS));
       setLoading(false);
       return;
     }
@@ -30,7 +41,7 @@ export function useHeirs() {
     }
     setHeirs(data ?? []);
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, setHeirs]);
 
   useEffect(() => {
     queueMicrotask(() => {

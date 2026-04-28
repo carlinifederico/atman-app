@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { DEMO_MODE } from "@/lib/demo-data";
+import { readScoped, writeScoped } from "@/lib/demo-storage";
 import {
   encryptWithPassphrase,
   decryptWithPassphrase,
@@ -11,21 +12,14 @@ import {
 } from "@/lib/crypto/vault";
 import type { VaultEntry } from "@/lib/types";
 
-const DEMO_KEY = "atman_vault_demo";
+const BUCKET = "vault_entries";
 
 function readDemoEntries(): VaultEntry[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(DEMO_KEY);
-    return raw ? (JSON.parse(raw) as VaultEntry[]) : [];
-  } catch {
-    return [];
-  }
+  return readScoped<VaultEntry[]>(BUCKET, []);
 }
 
 function writeDemoEntries(entries: VaultEntry[]) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(DEMO_KEY, JSON.stringify(entries));
+  writeScoped(BUCKET, entries);
 }
 
 export function useVault() {

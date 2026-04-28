@@ -237,9 +237,10 @@ export default function HerederosPage() {
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {heirs.map((heir) => (
+          {heirs.map((heir, idx) => (
             <Card
               key={heir.id}
+              data-tour={idx === 0 ? "heir-card" : undefined}
               className="bg-card border-white/10 hover:border-gold/30 transition-colors"
             >
               <CardHeader className="flex flex-row items-start justify-between pb-2">

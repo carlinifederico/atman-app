@@ -102,7 +102,7 @@ export default function DistribucionPage() {
       </div>
 
       {/* Wallet selector */}
-      <Card className="bg-card border-white/10">
+      <Card data-tour="distribution-selector" className="bg-card border-white/10">
         <CardContent className="pt-6">
           <div className="space-y-2">
             <Label>Seleccionar billetera</Label>

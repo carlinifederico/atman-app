@@ -201,7 +201,7 @@ export default function VaultPage() {
       </div>
 
       {/* Trust banner */}
-      <Card className="border-gold/20 bg-gold/5">
+      <Card data-tour="vault-banner" className="border-gold/20 bg-gold/5">
         <CardContent className="flex items-start gap-3 py-4">
           <ShieldCheck className="mt-0.5 shrink-0 text-gold" size={20} />
           <div className="text-sm text-muted-foreground">

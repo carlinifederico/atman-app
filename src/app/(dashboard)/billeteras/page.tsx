@@ -287,9 +287,10 @@ export default function BilleterasPage() {
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {wallets.map((wallet) => (
+          {wallets.map((wallet, idx) => (
             <Card
               key={wallet.id}
+              data-tour={idx === 0 ? "wallet-card" : undefined}
               className="bg-card border-white/10 hover:border-gold/30 transition-colors"
             >
               <CardHeader className="flex flex-row items-start justify-between pb-2">
@@ -341,6 +342,7 @@ export default function BilleterasPage() {
                     disabled={refreshing === wallet.id}
                     aria-label="Refrescar balance on-chain"
                     title="Leer balance on-chain"
+                    data-tour={wallet.id === wallets[0]?.id ? "wallet-refresh" : undefined}
                   >
                     <RefreshCw
                       size={14}

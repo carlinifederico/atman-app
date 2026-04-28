@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { DEMO_MODE, DEMO_USER } from "@/lib/demo-data";
+import { DEMO_MODE } from "@/lib/demo-data";
+import { getIdentity, clearIdentity, clearScopedStorage, type Identity } from "@/lib/identity";
 import { Logo } from "@/components/shared/Logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { TourButton } from "@/components/dashboard/TourButton";
 import {
   LayoutDashboard,
   Wallet,
@@ -84,6 +86,7 @@ function SidebarContent({
 }
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
+  const [identity, setIdentityState] = useState<Identity | null>(null);
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -94,7 +97,13 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   useEffect(() => {
     const checkAuth = async () => {
       if (DEMO_MODE) {
-        setEmail(DEMO_USER.email);
+        const id = getIdentity();
+        if (!id) {
+          router.replace("/welcome");
+          return;
+        }
+        setIdentityState(id);
+        setEmail(id.email ?? `${id.name} (demo)`);
         setLoading(false);
         return;
       }
@@ -113,7 +122,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   const handleLogout = async () => {
     if (DEMO_MODE) {
-      router.replace("/");
+      const id = getIdentity();
+      if (id) clearScopedStorage(id);
+      clearIdentity();
+      router.replace("/welcome");
       return;
     }
     await supabase.auth.signOut();
@@ -159,10 +171,23 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           <h1 className="text-lg font-semibold">{pageTitle}</h1>
 
           <div className="ml-auto flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">{email}</span>
-            <div className="h-8 w-8 rounded-full bg-gold/20 flex items-center justify-center">
-              <span className="text-xs font-bold text-gold">{email?.charAt(0).toUpperCase()}</span>
-            </div>
+            <TourButton />
+            <span className="hidden text-sm text-muted-foreground md:inline">{email}</span>
+            {identity?.picture ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={identity.picture}
+                alt={identity.name}
+                className="h-8 w-8 rounded-full ring-1 ring-gold/30"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="h-8 w-8 rounded-full bg-gold/20 flex items-center justify-center">
+                <span className="text-xs font-bold text-gold">
+                  {(identity?.name ?? email).charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
           </div>
         </header>
 

@@ -1,10 +1,26 @@
 import { test, expect } from "@playwright/test";
 
+// Each test gets a fresh "demo user" identity so demo state is isolated per test.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "atman_identity",
+      JSON.stringify({ name: "E2E Tester", source: "demo" })
+    );
+    window.localStorage.setItem("atman_tour_seen", "true");
+  });
+});
+
 test.describe("ATMAN demo flow", () => {
   test("landing renders with hero copy", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.getByText(/Herencia Digital/i).first()).toBeVisible();
+  });
+
+  test("welcome page redirects when identity already set", async ({ page }) => {
+    await page.goto("/welcome");
+    await expect(page).toHaveURL(/\/panel/);
   });
 
   test("can navigate to panel and see demo wallets", async ({ page }) => {
@@ -45,6 +61,11 @@ test.describe("ATMAN demo flow", () => {
     await expect(page.getByText(/AES-GCM-256/i)).toBeVisible();
     await expect(page.getByText(/PBKDF2-SHA256/i)).toBeVisible();
     await expect(page.getByText(/Todavía no tenés instrucciones cifradas/i)).toBeVisible();
+  });
+
+  test("tour button is rendered in dashboard header", async ({ page }) => {
+    await page.goto("/panel");
+    await expect(page.getByRole("button", { name: /Iniciar tour/i })).toBeVisible();
   });
 
   test("vault: encrypt and decrypt round-trip", async ({ page }) => {
